@@ -8,19 +8,26 @@ const {v4: uuid} = require("uuid")
 app.use(express.static("public"));
 app.use(express.json());
 
-app.get('/api/notes', (clientRequestObject, serverResponseObject) => {
+app.get("/api/notes", (clientRequestObject, serverResponseObject) => {
    //read the db.json and return all saved notes as json
    serverResponseObject.sendFile(path.join(__dirname, "db/db.json"));
    //output the object on the page to print out the notes
 });
 
-app.get('/notes', (clientRequestObject, serverResponseObject) => {
+app.get("/notes", (clientRequestObject, serverResponseObject) => {
     //read the db.json and return all saved notes as json
     serverResponseObject.sendFile(path.join(__dirname, "./public/notes.html"));
     //output the object on the page to print out the notes
  });
 
- app.post('/api/notes', (clientRequestObject, serverResponseObject) => {
+ app.delete("/api/notes/:filler", (clientRequestObject, serverResponseObject) => 
+ {
+  console.log(clientRequestObject);
+ 
+ return serverResponseObject.sendFile(path.join(__dirname, "./public/notes.html"));
+ });
+ 
+ app.post("/api/notes", (clientRequestObject, serverResponseObject) => {
   // Read the existing notes from db.json
   fs.readFile(path.join(__dirname, "db/db.json"), 'utf8', (err, data) => {
     if (err) {
@@ -53,7 +60,7 @@ app.get('/notes', (clientRequestObject, serverResponseObject) => {
 });
 
 // Will send the index.html file as response
-app.get('*', (clientRequestObject, serverResponseObject) => {
+app.get("*", (clientRequestObject, serverResponseObject) => {
   serverResponseObject.sendFile(path.join(__dirname, "./public/index.html"));
 });
 
