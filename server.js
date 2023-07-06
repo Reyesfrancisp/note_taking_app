@@ -1,29 +1,59 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-const baseUrl = 'http://localhost:3333';
-const endpoint = '/test/:some-value/val';
-const url = new URL(endpoint, baseUrl);
 
 //console.log(__dirname);
 
 
 // Will send the index.html file as response
-app.get('/', (clientRequestObject, serverResponseObject) => {
-    serverResponseObject.sendFile(path.join(__dirname, 'index.html'));
+app.get('*', (clientRequestObject, serverResponseObject) => {
+    serverResponseObject.sendFile(path.join(__dirname, "index.html"));
 });
 
 app.get('/api/notes', (clientRequestObject, serverResponseObject) => {
    //read the db.json and return all saved notes as json
-   serverResponseObject.sendFile(path.join(__dirname, 'db/db.json'));
+   serverResponseObject.sendFile(path.join(__dirname, "db/db.json"));
    //output the object on the page to print out the notes
 });
 
-app.get('/api/notes', (clientRequestObject, serverResponseObject) => {
+app.get('/notes', (clientRequestObject, serverResponseObject) => {
     //read the db.json and return all saved notes as json
-    serverResponseObject.sendFile(path.join(__dirname, 'db/db.json'));
+    serverResponseObject.sendFile(path.join(__dirname, "notes.html"));
     //output the object on the page to print out the notes
  });
+
+ app.post('/api/notes', (clientRequestObject, serverResponseObject) => {
+  // Read the existing notes from db.json
+  fs.readFile(path.join(__dirname, "db/db.json"), 'utf8', (err, data) => {
+    if (err) {
+      console.error(err);
+      return serverResponseObject.status(500).send('Server Error');
+    }
+
+    let notes = JSON.parse(data);
+
+    // Generate a unique ID for the new note using uuidv4
+    const newNote = {
+      id: uuidv4(),
+      ...clientRequestObject.body // Assuming the request body contains the new note data
+    };
+
+    // Add the new note to the array of notes
+    notes.push(newNote);
+
+    // Write the updated notes back to db.json
+    fs.writeFile(path.join(__dirname, "db/db.json"), JSON.stringify(notes), err => {
+      if (err) {
+        console.error(err);
+        return serverResponseObject.status(500).send('Server Error');
+      }
+
+      // Send the new note as the response
+      serverResponseObject.json(newNote);
+    });
+  });
+});
+
 
 app.listen(3333, () => console.log('Server started on port 3333.'));
 
