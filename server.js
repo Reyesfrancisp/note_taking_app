@@ -1,14 +1,12 @@
-const express = require('express');
-const path = require('path');
+const fs = require("fs");
+const express = require("express");
+const path = require("path");
 const app = express();
-
+const {v4: uuid} = require("uuid")
 //console.log(__dirname);
 
-
-// Will send the index.html file as response
-app.get('*', (clientRequestObject, serverResponseObject) => {
-    serverResponseObject.sendFile(path.join(__dirname, "index.html"));
-});
+app.use(express.static("public"));
+app.use(express.json());
 
 app.get('/api/notes', (clientRequestObject, serverResponseObject) => {
    //read the db.json and return all saved notes as json
@@ -18,7 +16,7 @@ app.get('/api/notes', (clientRequestObject, serverResponseObject) => {
 
 app.get('/notes', (clientRequestObject, serverResponseObject) => {
     //read the db.json and return all saved notes as json
-    serverResponseObject.sendFile(path.join(__dirname, "notes.html"));
+    serverResponseObject.sendFile(path.join(__dirname, "./public/notes.html"));
     //output the object on the page to print out the notes
  });
 
@@ -32,10 +30,10 @@ app.get('/notes', (clientRequestObject, serverResponseObject) => {
 
     let notes = JSON.parse(data);
 
-    // Generate a unique ID for the new note using uuidv4
+    // Generate a unique ID
     const newNote = {
-      id: uuidv4(),
-      ...clientRequestObject.body // Assuming the request body contains the new note data
+      id: uuid(),
+      ...clientRequestObject.body // Request body contains the new note data
     };
 
     // Add the new note to the array of notes
@@ -54,6 +52,10 @@ app.get('/notes', (clientRequestObject, serverResponseObject) => {
   });
 });
 
+// Will send the index.html file as response
+app.get('*', (clientRequestObject, serverResponseObject) => {
+  serverResponseObject.sendFile(path.join(__dirname, "./public/index.html"));
+});
 
 app.listen(3333, () => console.log('Server started on port 3333.'));
 
