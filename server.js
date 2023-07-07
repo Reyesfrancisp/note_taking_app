@@ -33,7 +33,16 @@ app.get("/notes", (clientRequestObject, serverResponseObject) => {
     }
 
     let notes = JSON.parse(data);
-    // ...
+
+    const noteIndex = notes.findIndex(note => note.id === noteId);
+
+if (noteIndex === -1) {
+    // If the note is not found, return an error response
+    return serverResponseObject.status(404).send('Note not found');
+}
+
+// Remove the note from the array
+notes.splice(noteIndex, 1);
 });
 
 
