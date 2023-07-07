@@ -22,8 +22,9 @@ app.get("/notes", (clientRequestObject, serverResponseObject) => {
 });
 
 app.delete("/api/notes/:filler", (clientRequestObject, serverResponseObject) => {
-  //console.log(clientRequestObject);
   const noteId = clientRequestObject.params.id;
+
+  let notes;
 
   fs.readFile(path.join(__dirname, "db/db.json"), 'utf8', (err, data) => {
     if (err) {
@@ -31,7 +32,7 @@ app.delete("/api/notes/:filler", (clientRequestObject, serverResponseObject) => 
       return serverResponseObject.status(500).send('Server Error');
     }
 
-    let notes = JSON.parse(data);
+    notes = JSON.parse(data); // Update the existing 'notes' variable
 
     const noteIndex = notes.findIndex(note => note.id === noteId);
 
@@ -42,18 +43,19 @@ app.delete("/api/notes/:filler", (clientRequestObject, serverResponseObject) => 
 
     // Remove the note from the array
     notes.splice(noteIndex, 1);
-  });
 
-  fs.writeFile(path.join(__dirname, "db/db.json"), JSON.stringify(notes), err => {
-    if (err) {
-      console.error(err);
-      return serverResponseObject.status(500).send('Server Error');
-    }
+    fs.writeFile(path.join(__dirname, "db/db.json"), JSON.stringify(notes), err => {
+      if (err) {
+        console.error(err);
+        return serverResponseObject.status(500).send('Server Error');
+      }
 
-    // Send a success response
-    serverResponseObject.sendStatus(204);
+      // Send a success response
+      return serverResponseObject.sendStatus(204);
+    });
   });
 });
+
 
 app.post("/api/notes", (clientRequestObject, serverResponseObject) => {
   // Read the existing notes from db.json
