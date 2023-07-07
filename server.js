@@ -23,7 +23,20 @@ app.get("/notes", (clientRequestObject, serverResponseObject) => {
 
  app.delete("/api/notes/:filler", (clientRequestObject, serverResponseObject) => 
  {
-  console.log(clientRequestObject);
+  //console.log(clientRequestObject);
+  const noteId = clientRequestObject.params.id;
+
+  fs.readFile(path.join(__dirname, "db/db.json"), 'utf8', (err, data) => {
+    if (err) {
+        console.error(err);
+        return serverResponseObject.status(500).send('Server Error');
+    }
+
+    let notes = JSON.parse(data);
+    // ...
+});
+
+
  
  return serverResponseObject.sendFile(path.join(__dirname, "./public/notes.html"));
  });
