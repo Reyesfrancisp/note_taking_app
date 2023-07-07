@@ -21,19 +21,15 @@ app.get("/notes", (clientRequestObject, serverResponseObject) => {
   //output the object on the page to print out the notes
 });
 
-app.delete("/api/notes/:filler", (clientRequestObject, serverResponseObject) => {
+app.delete("/api/notes/:id", (clientRequestObject, serverResponseObject) => {
   const noteId = clientRequestObject.params.id;
-
-  let notes;
-
   fs.readFile(path.join(__dirname, "db/db.json"), 'utf8', (err, data) => {
     if (err) {
       console.error(err);
       return serverResponseObject.status(500).send('Server Error');
     }
 
-    notes = JSON.parse(data); // Update the existing 'notes' variable
-
+    let notes = JSON.parse(data);
     const noteIndex = notes.findIndex(note => note.id === noteId);
 
     if (noteIndex === -1) {
@@ -51,10 +47,12 @@ app.delete("/api/notes/:filler", (clientRequestObject, serverResponseObject) => 
       }
 
       // Send a success response
-      return serverResponseObject.sendStatus(204);
+      serverResponseObject.sendStatus(204);
     });
   });
 });
+
+
 
 
 app.post("/api/notes", (clientRequestObject, serverResponseObject) => {
