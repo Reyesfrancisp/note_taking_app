@@ -2,7 +2,7 @@ const fs = require("fs");
 const express = require("express");
 const path = require("path");
 const app = express();
-const {v4: uuid} = require("uuid")
+const { v4: uuid } = require("uuid")
 const PORT = process.env.PORT || 3333;
 //console.log(__dirname);
 
@@ -10,47 +10,52 @@ app.use(express.static("public"));
 app.use(express.json());
 
 app.get("/api/notes", (clientRequestObject, serverResponseObject) => {
-   //read the db.json and return all saved notes as json
-   serverResponseObject.sendFile(path.join(__dirname, "db/db.json"));
-   //output the object on the page to print out the notes
+  //read the db.json and return all saved notes as json
+  serverResponseObject.sendFile(path.join(__dirname, "db/db.json"));
+  //output the object on the page to print out the notes
 });
 
 app.get("/notes", (clientRequestObject, serverResponseObject) => {
-    //read the db.json and return all saved notes as json
-    serverResponseObject.sendFile(path.join(__dirname, "./public/notes.html"));
-    //output the object on the page to print out the notes
- });
+  //read the db.json and return all saved notes as json
+  serverResponseObject.sendFile(path.join(__dirname, "./public/notes.html"));
+  //output the object on the page to print out the notes
+});
 
- app.delete("/api/notes/:filler", (clientRequestObject, serverResponseObject) => 
- {
+app.delete("/api/notes/:filler", (clientRequestObject, serverResponseObject) => {
   //console.log(clientRequestObject);
   const noteId = clientRequestObject.params.id;
 
   fs.readFile(path.join(__dirname, "db/db.json"), 'utf8', (err, data) => {
     if (err) {
-        console.error(err);
-        return serverResponseObject.status(500).send('Server Error');
+      console.error(err);
+      return serverResponseObject.status(500).send('Server Error');
     }
 
     let notes = JSON.parse(data);
 
     const noteIndex = notes.findIndex(note => note.id === noteId);
 
-if (noteIndex === -1) {
-    // If the note is not found, return an error response
-    return serverResponseObject.status(404).send('Note not found');
-}
+    if (noteIndex === -1) {
+      // If the note is not found, return an error response
+      return serverResponseObject.status(404).send('Note not found');
+    }
 
-// Remove the note from the array
-notes.splice(noteIndex, 1);
+    // Remove the note from the array
+    notes.splice(noteIndex, 1);
+  });
+
+  fs.writeFile(path.join(__dirname, "db/db.json"), JSON.stringify(notes), err => {
+    if (err) {
+      console.error(err);
+      return serverResponseObject.status(500).send('Server Error');
+    }
+
+    // Send a success response
+    serverResponseObject.sendStatus(204);
+  });
 });
 
-
- 
- return serverResponseObject.sendFile(path.join(__dirname, "./public/notes.html"));
- });
- 
- app.post("/api/notes", (clientRequestObject, serverResponseObject) => {
+app.post("/api/notes", (clientRequestObject, serverResponseObject) => {
   // Read the existing notes from db.json
   fs.readFile(path.join(__dirname, "db/db.json"), 'utf8', (err, data) => {
     if (err) {
