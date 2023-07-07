@@ -3,6 +3,7 @@ const express = require("express");
 const path = require("path");
 const app = express();
 const {v4: uuid} = require("uuid")
+const PORT = process.env.PORT || 3333;
 //console.log(__dirname);
 
 app.use(express.static("public"));
@@ -64,7 +65,7 @@ app.get("*", (clientRequestObject, serverResponseObject) => {
   serverResponseObject.sendFile(path.join(__dirname, "./public/index.html"));
 });
 
-app.listen(3333, () => console.log('Server started on port 3333.'));
+app.listen(PORT, () => console.log('Server started on port 3333.'));
 
 // Getting Started
 // The application should have a db.json file on the back end that will be used to store and retrieve notes using the fs module.
