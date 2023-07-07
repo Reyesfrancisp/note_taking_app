@@ -31,7 +31,7 @@ app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });
 
-// Function to read and send all saved notes as JSON
+// Function to read and send all saved notes as formatted JSON
 function getNotes(req, res) {
   fs.readFile(path.join(__dirname, "db/db.json"), 'utf8', (err, data) => {
     if (err) {
@@ -40,7 +40,7 @@ function getNotes(req, res) {
     }
 
     const notes = JSON.parse(data);
-    res.json(notes);
+    res.json(notes, null, 2);
   });
 }
 
@@ -68,7 +68,7 @@ function deleteNote(req, res) {
 
     notes.splice(noteIndex, 1);
 
-    fs.writeFile(path.join(__dirname, "db/db.json"), JSON.stringify(notes), err => {
+    fs.writeFile(path.join(__dirname, "db/db.json"), JSON.stringify(notes, null, 2), err => {
       if (err) {
         console.error(err);
         return res.status(500).send('Server Error');
@@ -96,16 +96,19 @@ function createNote(req, res) {
 
     notes.push(newNote);
 
-    fs.writeFile(path.join(__dirname, "db/db.json"), JSON.stringify(notes), err => {
+    const updatedNotes = JSON.stringify(notes, null, 2); // Include indentation
+
+    fs.writeFile(path.join(__dirname, "db/db.json"), updatedNotes, err => {
       if (err) {
         console.error(err);
         return res.status(500).send('Server Error');
       }
 
-      res.json(newNote);
+      res.json(newNote, null, 2); // Respond with formatted JSON
     });
   });
 }
+
 
 // Function to return the "index.html" file for all other routes
 function getDefaultPage(req, res) {
