@@ -25,12 +25,17 @@ The project is run through heroku. As I was having issues with heroku intially I
 
   ## Usage
 
+[Link to the deployed Heroku Website](https://francis-reyes-note-app-d97b2114f590.herokuapp.com/)
+
 To use the project you can simply run the index file and fill in the required inputs. Feel free to put in whatever test cases you feel like to see if there are any issues with the logic.
 
 
   ## Visuals
 
   [Link to youtube video showcasing the running code](https://youtu.be/SNGlSK1cuvA)
+
+<img src = ".\assets\note_taker_example_page.png">
+
 
   ## Contributions
 
